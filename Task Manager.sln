@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTaskManager.Api", "MPTask
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTaskManager.Web", "MPTaskManager.Web\MPTaskManager.Web.csproj", "{20BE82BA-C5A6-41E7-A682-9E9CC738E81A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Screenshots", "Screenshots", "{AB3D690E-EC97-4DFD-8FB0-194F9EA92917}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
