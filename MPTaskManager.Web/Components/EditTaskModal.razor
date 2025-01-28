@@ -1,0 +1,58 @@
+﻿@using MPTaskManager.Api.DTOs
+@using Microsoft.AspNetCore.Components
+
+<div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5); z-index: 1050;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="btn-close" @onclick="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Título</label>
+                    <input class="form-control" @bind="Model.Title" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-control" @bind="Model.Description" style="min-height: 100px;max-height: 200px; overflow: scroll"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Data</label>
+                    <input type="datetime-local" class="form-control" @bind="Model.DueDate" />
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" @bind="Model.IsDone" />
+                    <label class="form-check-label">Concluída</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="Close">Cancelar</button>
+                <button class="btn btn-primary" @onclick="Save">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Editar Tarefa";
+    [Parameter] public TaskItemUpdateRequestDTO Model { get; set; } = new();
+    [Parameter] public EventCallback<TaskItemUpdateRequestDTO> OnSave { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private async Task Save()
+    {
+        if (OnSave.HasDelegate)
+        {
+            await OnSave.InvokeAsync(Model);
+        }
+    }
+
+    private async Task Close()
+    {
+        if (OnClose.HasDelegate)
+        {
+            await OnClose.InvokeAsync();
+        }
+    }
+}

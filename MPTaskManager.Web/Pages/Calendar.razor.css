@@ -1,0 +1,130 @@
+﻿.calendar-container{
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    text-align: center;
+    padding: 0px;
+}
+
+/* Tarefa concluída */
+.task-done {
+    background-color: #10fd4d; /* Verde claro */
+    border: 1px solid #c3e6cb;
+    color: black;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tarefa dentro do prazo */
+.task-pending {
+    background-color: #ffc51f; /* Amarelo claro */
+    border: 1px solid #ffeeba;
+    color: black;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tarefa atrasada */
+.task-overdue {
+    background-color: #ff2b40; /* Vermelho claro */
+    border: 1px solid #f5c6cb;
+    color: black;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.task-item {
+    cursor: pointer; /* Garante que o cursor mude para a mão */
+    display: flex; /* Habilita flexbox */
+    flex-direction: column; /* Organiza o conteúdo em coluna */
+    justify-content: center; /* Centraliza verticalmente */
+    align-items: center; /* Centraliza horizontalmente */
+    text-align: center; /* Centraliza o texto */
+    line-height: 0.7; /* Espaçamento entre linhas */
+    border-radius: 5px; /* Bordas arredondadas */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve */
+}
+
+li strong {
+    font-weight: bold;
+    color: black !important;
+}
+
+.task-details {
+    background-color: #ffffff; /* Fundo branco */
+    border: 1px solid #ddd; /* Borda cinza clara */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra leve */
+}
+
+.task-details h5 {
+    color: #512777; /* Título em roxo */
+    font-weight: bold;
+}
+
+.task-details p {
+    margin: 0.5rem 0;
+    color: #333; /* Texto escuro */
+}
+
+.calendar-day{
+    width: 100%;
+    margin: 0px;
+}
+.calendar-text{
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    color: white;
+    background: linear-gradient(180deg, #512777, #6c3ba5);
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 10px;
+    margin: 0px;
+}
+.calendar-day h4 {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.day-name {
+    font-size: 1.4rem;
+    text-transform: uppercase; /* Garantindo que o dia da semana estará em maiúsculas */
+}
+
+.date {
+    font-size: 1.1rem;
+    color: white; /* Cor suave para a data */
+}
+
+.task-count {
+    font-size: 1rem;
+    color: darkgray; /* Cor mais suave para o número de tarefas */
+}
+
+.day-header{
+    height: 100px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #512777;
+    align-self: center;
+    text-align: center;
+    
+}

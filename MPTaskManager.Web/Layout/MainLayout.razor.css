@@ -1,0 +1,36 @@
+/* Página geral */
+.page {
+    background: linear-gradient(180deg, #3a0647 0%, #512777 100%); /* Fundo com gradiente roxo */
+    min-height: 100vh; /* Garante altura mínima de 100% da tela */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Conteúdo principal */
+main {
+    flex: 1;
+    padding: 2rem;
+    background-color: #f8f9fa; /* Fundo branco suave */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra no conteúdo */
+    margin: 2rem auto;
+    max-width: none;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    main {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+}

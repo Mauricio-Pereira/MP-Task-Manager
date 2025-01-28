@@ -1,0 +1,101 @@
+﻿@using MPTaskManager.Api.DTOs
+<div class="modal-overlay" style="@(IsVisible ? "display: flex;" : "display: none;")">
+    <div class="modal-content">
+        <h5>Detalhes da Tarefa</h5>
+        <div>
+            <label><strong>Título:</strong></label>
+            @if (IsEditing)
+            {
+                <input class="form-control mb-2" @bind="Task.Title" />
+            }
+            else
+            {
+                <p>@Task?.Title</p>
+            }
+        </div>
+        <div>
+            <label><strong>Descrição:</strong></label>
+            @if (IsEditing)
+            {
+                <textarea class="form-control mb-2" @bind="Task.Description" style="min-height: 100px; max-height: 250px; overflow: auto"></textarea>
+            }
+            else
+            {
+                <p>@Task?.Description</p>
+            }
+        </div>
+        <div>
+            <label><strong>Data e Hora:</strong></label>
+            @if (IsEditing)
+            {
+                <input type="datetime-local" class="form-control mb-2" @bind="Task.DueDate" />
+            }
+            else
+            {
+                <p>@Task?.DueDate.ToString("dd/MM/yyyy HH:mm")</p>
+            }
+        </div>
+        <div>
+            <label><strong>Status:</strong></label>
+            @if (IsEditing)
+            {
+                <input type="checkbox" @bind="Task.IsDone"> <label>Concluída</label>
+            }
+            else
+            {
+                <p>@(Task?.IsDone == true ? "Concluída" : "Pendente")</p>
+            }
+        </div>
+        <div class="modal-footer mt-3">
+            @if (IsEditing)
+            {
+                <button class="btn btn-primary" @onclick="Save">Salvar</button>
+            }
+            else
+            {
+                <button class="btn btn-secondary" @onclick="EnableEditing">Editar</button>
+            }
+            <button class="btn btn-danger" @onclick="Close">Fechar</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public TaskItemResponseDTO Task { get; set; } = new();
+    [Parameter] public EventCallback<TaskItemResponseDTO> OnSave { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private bool IsEditing { get; set; } = false;
+    private bool IsVisible { get; set; } = false;
+
+    public void Show()
+    {
+        IsVisible = true;
+        IsEditing = false;
+    }
+
+    private void EnableEditing()
+    {
+        IsEditing = true;
+    }
+
+    private async Task Save()
+    {
+        if (OnSave.HasDelegate)
+        {
+            await OnSave.InvokeAsync(Task);
+        }
+
+        IsEditing = false;
+        IsVisible = false;
+    }
+
+    private async Task Close()
+    {
+        IsVisible = false;
+        if (OnClose.HasDelegate)
+        {
+            await OnClose.InvokeAsync();
+        }
+    }
+}

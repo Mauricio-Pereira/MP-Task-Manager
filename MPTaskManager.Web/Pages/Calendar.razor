@@ -1,0 +1,275 @@
+﻿@page "/calendar"
+@using MPTaskManager.Api.DTOs
+@using MPTaskManager.Web.Services
+@inject TaskService TaskService
+@using MPTaskManager.Web.Components
+
+<h3>Calendário de Tarefas</h3>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-outline-secondary" @onclick="GoToPreviousWeek">Semana Anterior</button>
+    <div>
+        <label for="date-picker" class="form-label">Escolha a data:</label>
+        <input id="date-picker" type="date" class="form-control d-inline-block" style="width: auto;" @onchange="OnDateChanged" value="@SelectedDate.ToString("yyyy-MM-dd")" />
+    </div>
+    <button class="btn btn-outline-secondary" @onclick="GoToNextWeek">Próxima Semana</button>
+</div>
+
+@if (_isLoading)
+{
+<div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Carregando...</span>
+    </div>
+    <p>Carregando tarefas...</p>
+</div>
+}
+else
+{
+    <div class="calendar-text">
+        <h4 class="mb-3">Tarefas da semana de @StartOfWeek.ToString("dd/MM/yyyy") a @EndOfWeek.ToString("dd/MM/yyyy")</h4>
+    </div>
+    <div class="m-3 justify-content-center align-items-center">
+        <button class="btn btn-success" @onclick="OpenCreateModal">
+            <i class="bi bi-plus-circle"></i> Nova Tarefa
+        </button>
+    </div>
+
+    <div class="calendar-container">
+        @foreach (var day in DaysOfWeek)
+        {
+            <div class="calendar-day">
+                <div class="day-header">
+                    <h4>
+                        <span class="day-name">@day.Key.ToString("dddd").ToUpper()</span> <br/>
+                        <span class="date">@day.Key.ToString("dd/MM/yyyy")</span> <br/>
+                        <span class="task-count">(@day.Value.Count tarefas)</span>
+                    </h4>
+                </div>
+                @if (day.Value.Any())
+                {
+                    <ul class="text-dark">
+                        @foreach (var task in day.Value)
+                        {
+                            string taskClass = GetTaskClass(task);
+
+                            <li class="@taskClass task-item" @onclick="() => OpenTaskDetails(task)">
+                                <strong class="text-dark">@task.DueDate.ToString("HH:mm")</strong> <br/> @task.Title
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>Sem tarefas para este dia</p>
+                }
+            </div>
+        }
+    </div>
+}
+
+@if (_showCreateModal)
+{
+<CreateTaskModal Model="_newTaskModel"
+                 OnSave="SaveNewTask"
+                 OnClose="CloseCreateModal" />
+}
+
+
+<!-- Modal -->
+<TaskDetailsModal @ref="TaskModal"
+                  Task="SelectedTask"
+                  OnSave="SaveTaskChanges"
+                  OnClose="CloseTaskModal" />
+
+@code {
+    private bool _isLoading = true;
+    private bool _showCreateModal = false;
+    private TaskItemCreateRequestDTO _newTaskModel = new();
+    private IEnumerable<TaskItemResponseDTO> tasks = new List<TaskItemResponseDTO>();
+    private Dictionary<DateTime, List<TaskItemResponseDTO>> DaysOfWeek = new();
+    private DateTime StartOfWeek;
+    private DateTime EndOfWeek;
+    private DateTime SelectedDate;
+    private TaskItemResponseDTO SelectedTask { get; set; } = new();
+    private TaskDetailsModal? TaskModal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SelectedDate = DateTime.Now; // Inicializa com a data atual
+        UpdateWeekRange(SelectedDate);
+        await LoadTasks();
+        PrepareCalendar();
+    }
+
+    private async Task LoadTasks()
+    {
+        _isLoading = true; // Inicia o carregamento
+        try
+        {
+            tasks = await TaskService.GetAllTasksAsync() ?? new List<TaskItemResponseDTO>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar as tarefas: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false; // Finaliza o carregamento
+        }
+    }
+
+    private void PrepareCalendar()
+    {
+        DaysOfWeek.Clear();
+
+        // Prepara os dias da semana atual
+        for (var day = StartOfWeek; day <= EndOfWeek; day = day.AddDays(1))
+        {
+            DaysOfWeek[day] = new List<TaskItemResponseDTO>();
+        }
+
+        // Popula os dias com as tarefas correspondentes
+        foreach (var task in tasks)
+        {
+            var taskDate = task.DueDate.Date;
+            if (DaysOfWeek.ContainsKey(taskDate))
+            {
+                DaysOfWeek[taskDate].Add(task);
+            }
+        }
+
+        // Ordena as tarefas em cada dia por horário
+        foreach (var day in DaysOfWeek.Keys.ToList())
+        {
+            DaysOfWeek[day] = DaysOfWeek[day].OrderBy(t => t.DueDate).ToList();
+        }
+    }
+
+    private void UpdateWeekRange(DateTime date)
+    {
+        StartOfWeek = GetStartOfWeek(date); 
+        EndOfWeek = StartOfWeek.AddDays(6); 
+    }
+
+
+    private DateTime GetStartOfWeek(DateTime date)
+    {
+        int diff = (7 + (date.DayOfWeek - DayOfWeek.Sunday)) % 7; // Ajuste para domingo
+        return date.AddDays(-diff).Date; // Garante o início no domingo
+    }
+
+
+
+    private async Task GoToPreviousWeek()
+    {
+        SelectedDate = SelectedDate.AddDays(-7);
+        UpdateWeekRange(SelectedDate);
+        await ReloadCalendar();
+    }
+
+    private async Task GoToNextWeek()
+    {
+        SelectedDate = SelectedDate.AddDays(7);
+        UpdateWeekRange(SelectedDate);
+        await ReloadCalendar();
+    }
+
+    private async Task OnDateChanged(ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out var selectedDate))
+        {
+            SelectedDate = selectedDate;
+            UpdateWeekRange(SelectedDate);
+            await ReloadCalendar(); // Atualiza o calendário com os dados da nova semana
+        }
+    }
+
+    private async Task ReloadCalendar()
+    {
+        await LoadTasks();
+        PrepareCalendar();
+        StateHasChanged(); // Atualiza o estado da página
+    }
+
+    private string GetTaskClass(TaskItemResponseDTO task)
+    {
+        if (task.IsDone)
+        {
+            return "task-done";
+        }
+        else if (task.DueDate.Date < DateTime.Now.Date)
+        {
+            return "task-overdue";
+        }
+        else
+        {
+            return "task-pending";
+        }
+    }
+
+    private void OpenTaskDetails(TaskItemResponseDTO task)
+    {
+        SelectedTask = task;
+        TaskModal?.Show();
+    }
+
+    private async Task SaveTaskChanges(TaskItemResponseDTO updatedTask)
+    {
+        try
+        {
+            await TaskService.UpdateTaskAsync(updatedTask.Id, new TaskItemUpdateRequestDTO
+            {
+                Id = updatedTask.Id,
+                Title = updatedTask.Title,
+                Description = updatedTask.Description,
+                DueDate = updatedTask.DueDate,
+                IsDone = updatedTask.IsDone
+            });
+            await ReloadCalendar(); // Atualiza as tarefas e o calendário
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao salvar alterações: {ex.Message}");
+        }
+    }
+
+    private void CloseTaskModal()
+    {
+        SelectedTask = new();
+    }
+    
+    private void OpenCreateModal()
+    {
+        _newTaskModel = new TaskItemCreateRequestDTO
+        {
+            Title = string.Empty,
+            Description = string.Empty,
+            DueDate = DateTime.Now // Define a data atual como padrão
+        };
+        _showCreateModal = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        _showCreateModal = false;
+    }
+
+    private async Task SaveNewTask(TaskItemCreateRequestDTO newTask)
+    {
+        try
+        {
+            await TaskService.CreateTaskAsync(newTask);
+            await ReloadCalendar(); 
+            _showCreateModal = false; 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao criar a tarefa: {ex.Message}");
+        }
+    }
+
+    
+    
+
+}

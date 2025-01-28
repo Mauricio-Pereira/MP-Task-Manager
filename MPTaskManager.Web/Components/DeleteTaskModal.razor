@@ -1,0 +1,40 @@
+﻿@using MPTaskManager.Api.DTOs
+<div class="modal show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5); z-index: 1050;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Deletar Tarefa</h5>
+                <button type="button" class="btn-close" @onclick="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja deletar a tarefa <strong>@Task?.Title</strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="Close">Cancelar</button>
+                <button class="btn btn-danger" @onclick="Delete">Deletar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public TaskItemResponseDTO Task { get; set; }
+    [Parameter] public EventCallback<TaskItemResponseDTO> OnDelete { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private async Task Delete()
+    {
+        if (OnDelete.HasDelegate)
+        {
+            await OnDelete.InvokeAsync(Task);
+        }
+    }
+
+    private async Task Close()
+    {
+        if (OnClose.HasDelegate)
+        {
+            await OnClose.InvokeAsync();
+        }
+    }
+}

@@ -1,0 +1,49 @@
+/* Barra de navegação */
+.navbar {
+    position: sticky;
+    background-color: #3a0647 !important; /* Fundo roxo escuro */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff !important; /* Texto branco */
+}
+
+.navbar-nav .nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #d7d7d7 !important; /* Texto cinza claro */
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilo para o link ativo */
+.navbar-nav .nav-link.active {
+    background-color: #6c3ba5; /* Fundo roxo mais claro */
+    color: #ffffff !important; /* Texto branco */
+    border-radius: 8px; /* Bordas arredondadas */
+    padding: 0.5rem 1rem; /* Espaçamento interno */
+    font-weight: bold; /* Negrito para destaque */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Transição suave */
+}
+
+/* Efeito hover no link ativo */
+.navbar-nav .nav-link.active:hover {
+    background-color: #7e4fbf; /* Fundo roxo mais claro no hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Aumenta a sombra */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

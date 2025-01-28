@@ -1,0 +1,38 @@
+﻿.table-cell-scroll {
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 500px;
+    max-height: 100px;
+}
+
+.table-cell-scroll .scroll-content {
+    width: 100%;
+    max-height: 100px;
+    overflow: auto;
+    white-space: normal;
+}
+table {
+    width: 100%; /* Tabela ocupa todo o espaço disponível */
+    border-collapse: collapse; /* Remove espaços entre bordas */
+}
+
+th, td {
+    border: 1px solid #dee2e6; /* Define a cor das bordas */
+    padding: 8px; /* Adiciona espaçamento interno */
+    text-align: center; /* Centraliza o texto */
+}
+td{
+    vertical-align: middle;
+}
+th {
+    background-color: #f8f9fa; /* Fundo mais claro para o cabeçalho */
+    font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Cor de fundo alternada para linhas pares */
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* Cor de fundo para linhas ímpares */
+}
